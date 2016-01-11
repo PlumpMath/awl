@@ -1,8 +1,14 @@
 (ns awl.core
-  (:require [clojure.core.async
-             :as a
-             :refer [>! <! >!! <!! go go-loop chan buffer close! thread
-                     alts! alts!! timeout to-chan put!]]))
+  (:require
+    [clojure.tools.logging :as log]
+    [clojure.core.async :as a
+     :refer [>! <! >!! <!! go go-loop chan buffer close! thread
+             alts! alts!! timeout to-chan put!]]))
+
+(defn inject
+  "Start with values"
+  [& vs]
+  (to-chan (into [] vs)))
 
 (defn pull
   "Extract one item from flow. Aliased to core.async <!!"
