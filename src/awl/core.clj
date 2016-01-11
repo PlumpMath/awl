@@ -1,5 +1,4 @@
 (ns awl.core
-  (:refer-clojure :exclude [flush])
   (:require [clojure.core.async
              :as a
              :refer [>! <! >!! <!! go go-loop chan buffer close! thread
@@ -121,7 +120,7 @@
   "Pull all items off chan and conj them into a chan"
   (a/reduce conj [] in))
 
-(defn flush [in]
+(defn endcap [in]
   "Place at the end of an awl pipeline to ensure all values are consumed"
   (-> in combine <!!))
 
@@ -130,4 +129,4 @@
   [start & clauses]
   `(-> (to-chan ~start)
        ~@clauses
-       flush))
+       endcap))
