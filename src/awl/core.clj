@@ -77,30 +77,35 @@
             (close! out))))
     out))
 
-(defn xf [in xf]
+(defn xf
   "Pipe data into transducer fn"
+  [in xf]
   (a/pipe in (chan 1 xf)))
 
-(defn pp [in]
+(defn pp
   "Inject pretty print statement into stream"
+  [in]
   (process-fn in
     (fn [item]
       (clojure.pprint/pprint item)
       item)))
 
-(defn p [in]
+(defn p
   "Inject print statement into stream"
+  [in]
   (process-fn in
     (fn [item]
       (println item)
       item)))
 
-(defn limit [in ct]
+(defn limit
   "Take only ct from chan"
+  [in ct]
   (xf in (take ct)))
 
-(defn throttle [in ms]
+(defn throttle
   "Ensure data passing between chans respects time delay in ms"
+  [in ms]
   (let [out (chan)]
     (go (loop []
           (if-let [d (<! in)]
@@ -122,12 +127,14 @@
               (swap! ids conj id)
               (>!! chan item))))))))
 
-(defn combine [in]
+(defn combine
   "Pull all items off chan and conj them into a chan"
+  [in]
   (a/reduce conj [] in))
 
-(defn endcap [in]
+(defn endcap
   "Place at the end of an awl pipeline to ensure all values are consumed"
+  [in]
   (-> in combine <!!))
 
 (defmacro flow
