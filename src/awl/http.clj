@@ -52,13 +52,6 @@
        [(update-in req [:web-response] dissoc :body)
         (-> req :web-response :body html/html-snippet)]))))
 
-(defn web-get
-  "Fetch and process url as html"
-  ([in]
-   (web-get in nil))
-  ([in opts]
-   (-> in (http-fetch opts) (web-process opts))))
-
 (defn json-process
   "Extract json and return vector with:
    [response node, body content as JSON hashmap]"
@@ -70,9 +63,17 @@
         [(update-in req [:web-response] dissoc :body)
          (-> req :web-response :body json/parse-string)]))))
 
+(defn web-get
+  "Fetch and process url as html"
+  ([in]
+   (web-get in nil))
+  ([in opts]
+   (-> in (http-fetch opts) (web-process opts))))
+
 (defn json-get
   "Fetch and process url as JSON"
   ([in]
    (json-get in nil))
   ([in opts]
    (-> in (http-fetch opts) (json-process opts))))
+
