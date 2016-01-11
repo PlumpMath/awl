@@ -18,6 +18,10 @@
        :description "Awl - Stream it!"
        :license     {"MIT" "http://opensource.org/licenses/MIT"}})
 
+(deftask test-repl []
+  (set-env! :source-paths #(conj % "test"))
+  (repl))
+
 (deftask build
   "Build my project."
   []
