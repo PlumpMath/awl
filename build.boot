@@ -1,7 +1,11 @@
 (set-env!
   :source-paths #{"src"}
   :dependencies '[[adzerk/bootlaces "0.1.11"]
-                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]])
+                  [http-kit "2.1.16"]
+                  [enlive "1.1.6"]
+                  [cheshire "5.5.0"]
+                  [org.clojure/core.async "0.2.374"]
+                  [org.clojure/tools.logging "0.3.1"]])
 
 (require '[adzerk.bootlaces :refer :all])
 
