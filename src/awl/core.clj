@@ -48,11 +48,9 @@
   (let [out           (chan)
         queue-ct      (atom 0)
         should-close? (atom false)
-        inc-fn        (fn []
-                        (swap! queue-ct inc))
-        dec-fn        (fn []
-                        (if (and (= (swap! queue-ct dec) 0) @should-close?)
-                               (close! out)))]
+        inc-fn        #(swap! queue-ct inc)
+        dec-fn        #(if (and (= (swap! queue-ct dec) 0) @should-close?)
+                         (close! out))]
     (go-loop []
       (if-let [data (<! in)]
         (do (f data out inc-fn dec-fn)
