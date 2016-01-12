@@ -5,15 +5,21 @@
      :refer [>! <! >!! <!! go go-loop chan buffer close! thread
              alts! alts!! timeout to-chan put!]]))
 
+(defn- error? [ch]
+  (instance? Throwable ch))
+
+(defn- throw-if-error [v]
+  (if (error? v) (throw v) v))
+
 (defn inject
   "Start with values"
   [& vs]
   (to-chan (into [] vs)))
 
 (defn pull
-  "Extract one item from flow. Aliased to core.async <!!"
+  "Extract one item from flow. Throws if error happens within flow. Aliased to core.async <!!"
   [in]
-  (<!! in))
+  (throw-if-error (<!! in)))
 
 (defn process-sync
   "Process and push data on chan. Must use synchronous (>!! or put!) putting on
@@ -22,12 +28,17 @@
   [in fn]
   (let [out (chan)]
     (go-loop []
-      (if-let [data (<! in)]
-        (do (fn data out)
-            (recur))
-        (close! out)))
+      (let [d (<! in)]
+        (cond
+          (nil? d)   (close! out)
+          (error? d) (do (>!! out d)
+                         (close! out))
+          :else      (let [fv (try (fn d out) (catch Exception e e))]
+                       (if (error? fv)
+                         (do (>!! out fv)
+                             (close! out))
+                         (recur))))))
     out))
-
 
 (defn process-async
   "Process data and allow for further asyncronous processing. A counter fns
@@ -119,7 +130,9 @@
 (defn endcap
   "Place at the end of an awl pipeline to ensure all values are consumed"
   [in]
-  (<!! (combine in)))
+  (let [v (<!! (combine in))]
+    (throw-if-error (first v))
+    v))
 
 (defmacro flow
   "Simple flow macro to simplify combining channels"
