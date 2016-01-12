@@ -55,28 +55,16 @@
   "Process data and push fn return value onto chan. Can only push a single
   value onto the channel. If you want to push multiple values use process-sync
   or process-async."
-  [in fn]
-  (let [out (chan)]
-    (go (loop []
-          (if-let [data (<! in)]
-            (do (let [fndata (fn data)]
-                  (if fndata (>!! out fndata)))
-                (recur))
-            (close! out))))
-    out))
+  [in f]
+  (process-sync in
+    #(when-let [fndata (f %1)] (>!! %2 fndata))))
 
 (defn process-fn-seq
   "Works exactly the same as process-fn except it pushes each item in a
   returned sequence onto the next channel"
-  [in fn]
-  (let [out (chan)]
-    (go (loop []
-          (if-let [data (<! in)]
-            (do (let [fndata (fn data)]
-                  (if fndata (doseq [item fndata] (>!! out item))))
-                (recur))
-            (close! out))))
-    out))
+  [in f]
+  (process-sync in
+    #(when-let [fndata (f %1)] (doseq [item fndata] (>!! %2 item)))))
 
 (defn xf
   "Pipe data into transducer fn"
