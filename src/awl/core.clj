@@ -71,21 +71,20 @@
   [in xf]
   (a/pipe in (chan 1 xf)))
 
+(defn- tap
+  "call value with fn and push initial value into chan"
+  [in f]
+  (process-fn in (fn [v] (f v) v)))
+
 (defn pp
   "Inject pretty print statement into stream"
   [in]
-  (process-fn in
-    (fn [item]
-      (clojure.pprint/pprint item)
-      item)))
+  (tap in clojure.pprint/pprint))
 
 (defn p
   "Inject print statement into stream"
   [in]
-  (process-fn in
-    (fn [item]
-      (println item)
-      item)))
+  (tap in println))
 
 (defn limit
   "Take only ct from chan"
