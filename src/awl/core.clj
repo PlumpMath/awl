@@ -121,7 +121,7 @@
               (>!! chan item))))))))
 
 (defn combine
-  "Pull all items off chan and conj them into a chan"
+  "Pull all items off chan and conj them into vector. Vector is pushed onto the chan."
   [in]
   (a/reduce conj [] in))
 
