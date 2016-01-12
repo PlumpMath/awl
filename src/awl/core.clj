@@ -21,12 +21,13 @@
   completion"
   [in fn]
   (let [out (chan)]
-    (go (loop []
-          (if-let [data (<! in)]
-            (do (fn data out)
-                (recur))
-            (close! out))))
+    (go-loop []
+      (if-let [data (<! in)]
+        (do (fn data out)
+            (recur))
+        (close! out)))
     out))
+
 
 (defn process-async
   "Process data and allow for further asyncronous processing. A counter fns
