@@ -42,8 +42,7 @@
                (end))))))))))
 
 (defn web-process
-  "Extract web content and return vector with:
-   [response node, body content as enlive node]"
+  "Fetch and process url as html"
   ([in]
    (web-process in nil))
   ([in opts]
@@ -53,8 +52,7 @@
         (-> req :web-response :body html/html-snippet)]))))
 
 (defn json-process
-  "Extract json and return vector with:
-   [response node, body content as JSON hashmap]"
+  "Fetch and process url as JSON"
   ([in]
    (json-process in nil))
   ([in opts]
@@ -64,16 +62,17 @@
          (-> req :web-response :body json/parse-string)]))))
 
 (defn web-get
-  "Fetch and process url as html"
+  "Extract web content and return vector with:
+   [response node, body content as enlive node]"
   ([in]
    (web-get in nil))
   ([in opts]
    (-> in (http-fetch opts) (web-process opts))))
 
 (defn json-get
-  "Fetch and process url as JSON"
+  "Extract json and return vector with:
+   [response node, body content as JSON hashmap]"
   ([in]
    (json-get in nil))
   ([in opts]
    (-> in (http-fetch opts) (json-process opts))))
-
