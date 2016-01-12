@@ -94,14 +94,10 @@
 (defn throttle
   "Ensure data passing between chans respects time delay in ms"
   [in ms]
-  (let [out (chan)]
-    (go (loop []
-          (if-let [d (<! in)]
-            (do (>! out d)
-                (<! (timeout ms))
-                (recur))
-            (close! out))))
-    out))
+  (process-sync in
+    (fn [v out]
+      (>!! out v)
+      (<!! (timeout ms)))))
 
 (defn unique
   "Filter out duplicates flowing through chan"
