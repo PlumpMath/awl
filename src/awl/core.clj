@@ -119,7 +119,7 @@
 (defn endcap
   "Place at the end of an awl pipeline to ensure all values are consumed"
   [in]
-  (-> in combine <!!))
+  (<!! (combine in)))
 
 (defmacro flow
   "Simple flow macro to simplify combining channels"
