@@ -129,7 +129,7 @@
   "Place at the end of an awl pipeline to ensure all values are consumed"
   [in]
   (let [v (<!! (combine in))]
-    (throw-if-error (first v))
+    (throw-if-error (last v))
     v))
 
 (defmacro flow
